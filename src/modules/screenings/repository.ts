@@ -1,6 +1,6 @@
 import type { Database } from '@/database';
 
-const TABLE_NAME = 'movies';
+const TABLE_NAME = 'screenings';
 
 export default (db: Database) => ({
   findAll: async (limit = 10, offset = 0) =>

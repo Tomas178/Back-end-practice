@@ -1,4 +1,4 @@
-import { Kysely, SqliteDatabase } from 'kysely'
+import { Kysely, SqliteDatabase } from 'kysely';
 
 /** Migration used to initialize empty database tables for the test database. */
 export async function up(db: Kysely<SqliteDatabase>) {
@@ -8,7 +8,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull())
     .addColumn('title', 'text', (c) => c.notNull())
     .addColumn('year', 'numeric')
-    .execute()
+    .execute();
 
   await db.schema
     .createTable('people')
@@ -16,7 +16,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement().notNull())
     .addColumn('name', 'text', (c) => c.notNull())
     .addColumn('birth', 'numeric')
-    .execute()
+    .execute();
 
   await db.schema
     .createTable('stars')
@@ -27,7 +27,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('person_id', 'integer', (c) =>
       c.notNull().references('people.id')
     )
-    .execute()
+    .execute();
 
   await db.schema
     .createTable('directors')
@@ -38,7 +38,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('person_id', 'integer', (c) =>
       c.notNull().references('people.id')
     )
-    .execute()
+    .execute();
 
   await db.schema
     .createTable('ratings')
@@ -48,7 +48,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     )
     .addColumn('rating', 'real', (c) => c.notNull())
     .addColumn('votes', 'integer', (c) => c.notNull())
-    .execute()
+    .execute();
 }
 
 export async function down() {
