@@ -1,33 +1,30 @@
-## Setup
+# Tickets booking app
 
-**Note:** For this exercise, we have provided an `.env` file with the database connection string. Normally, you would not commit this file to version control. We are doing it here for simplicity and given that we are using a local SQLite database.
+## Requirements:
 
-## Migrations
+### For administrator
 
-Before running the migrations, we need to create a database. We can do this by running the following command:
+- Create new viewing screenings for watching a movie:
 
-```bash
-npm run migrate:latest
-```
+  - Timestamp should be a future date
+  - Number of tickets should be a positive integer
 
-## Running the server
+- Delete viewing screenings while they are empty
 
-In development mode:
+### For users
 
-```bash
-npm run dev
-```
+- Get movies with their title and year by providing a list of their IDs (e.g., `/movies?id=1,2,3`)
 
-In production mode:
+- Get a list of screenings available for booking. Screenings should include session information.
 
-```bash
-npm run start
-```
+  - Timestamp should be a current day or future date.
+  - Number of tickets should be positive integer
+  - Number of tickets left should be non negative integer and not larger than number of tickets in total.
+  - Movie: (title and year)
 
-## Updating types
+- Get list of booked tickets
 
-If you make changes to the database schema, you will need to update the types. You can do this by running the following command:
+  - Should return non negative number
 
-```bash
-npm run generate-types
-```
+- Create a booking for movie screening that has some tickets left.
+  - On successful booking should return movie information.
