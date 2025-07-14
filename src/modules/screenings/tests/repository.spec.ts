@@ -1,7 +1,14 @@
 import createTestDatabase from '@tests/utils/createTestDatabase';
 import { createFor } from '@tests/utils/records';
 import buildRepository from '../repository';
-import { MOVIES } from './utils/repository';
+import {
+  IDS_TO_UPDATE,
+  INSERTABLE_SCREENINGS,
+  MOVIES,
+  PROPERTIES_TO_UPDATE,
+  SCREENINGS,
+  UPDATED_SCREENINGS,
+} from './utils/repository';
 
 const db = await createTestDatabase();
 const repository = buildRepository(db);
@@ -19,79 +26,98 @@ describe('Screenings returns', () => {
   it('should return all existing screenings', async () => {
     await createMovies([MOVIES[0]]);
 
-    await createScreenings([
-      {
-        id: 1,
-        movieId: MOVIES[0].id,
-        totalTickets: 1000,
-        leftTickets: 1000,
-        createdAt: '2025-07-13',
-      },
-    ]);
+    await createScreenings(SCREENINGS[0]);
 
     const screenings = await repository.findAll();
 
-    expect(screenings).toEqual([
-      {
-        id: 1,
-        movieId: MOVIES[0].id,
-        totalTickets: 1000,
-        leftTickets: 1000,
-        createdAt: '2025-07-13',
-      },
-    ]);
+    expect(screenings).toEqual([SCREENINGS[0]]);
+  });
+
+  it('Should return screening by given ID', async () => {
+    await createMovies(MOVIES);
+    await createScreenings(SCREENINGS);
+
+    const screening = await repository.findById(SCREENINGS[1].id);
+
+    expect(screening).toEqual(SCREENINGS[1]);
   });
 
   it('Returns screenings by their IDs', async () => {
     await createMovies(MOVIES);
-    await createScreenings([
-      {
-        id: 1,
-        movieId: MOVIES[0].id,
-        totalTickets: 500,
-        leftTickets: 500,
-        createdAt: '2025-07-13',
-      },
-      {
-        id: 26,
-        movieId: MOVIES[1].id,
-        totalTickets: 250,
-        leftTickets: 140,
-        createdAt: '2025-04-13',
-      },
-      {
-        id: 50,
-        movieId: MOVIES[2].id,
-        totalTickets: 1000,
-        leftTickets: 26,
-        createdAt: '2025-05-26',
-      },
-    ]);
+    await createScreenings(SCREENINGS);
 
-    const screenings = await repository.findByIds([1, 50, 26]);
+    const screenings = await repository.findByIds(
+      SCREENINGS.map((screening) => screening.id)
+    );
 
-    expect(screenings).toEqual([
-      {
-        id: 1,
-        movieId: MOVIES[0].id,
-        totalTickets: 500,
-        leftTickets: 500,
-        createdAt: '2025-07-13',
-      },
-      {
-        id: 26,
-        movieId: MOVIES[1].id,
-        totalTickets: 250,
-        leftTickets: 140,
-        createdAt: '2025-04-13',
-      },
-      {
-        id: 50,
-        movieId: MOVIES[2].id,
-        totalTickets: 1000,
-        leftTickets: 26,
-        createdAt: '2025-05-26',
-      },
-    ]);
+    expect(screenings).toEqual(SCREENINGS);
+  });
+});
+
+describe('Screenings adding', () => {
+  beforeEach(async () => {
+    await createMovies(MOVIES);
+  });
+
+  it('Adds one screening successfully', async () => {
+    const [screening] = await repository.create(INSERTABLE_SCREENINGS[0]);
+
+    if (screening) {
+      expect(screening).toEqual(await repository.findById(screening.id));
+    }
+  });
+
+  it('Adds multiple screenings correctly', async () => {
+    const [screening1] = await repository.create(INSERTABLE_SCREENINGS[0]);
+    const [screening2] = await repository.create(INSERTABLE_SCREENINGS[1]);
+    const [screening3] = await repository.create(INSERTABLE_SCREENINGS[2]);
+
+    const createdScreenings = [screening1, screening2, screening3];
+    const retrievedScreenings = await repository.findByIds(
+      createdScreenings.map((screening) => screening.id)
+    );
+
+    expect(retrievedScreenings).toHaveLength(createdScreenings.length);
+    expect(createdScreenings).toEqual(retrievedScreenings);
+  });
+});
+
+describe('Updating screenings', () => {
+  beforeEach(async () => {
+    await createMovies(MOVIES);
+    await createScreenings(SCREENINGS);
+  });
+
+  it('Successfully updates one screening', async () => {
+    const updatedScreening = await repository.update(
+      IDS_TO_UPDATE[0],
+      PROPERTIES_TO_UPDATE[0]
+    );
+
+    expect(updatedScreening).toEqual(UPDATED_SCREENINGS[0]);
+  });
+
+  it('Successfully updates multiple screenings', async () => {
+    const updatedScreening1 = await repository.update(
+      IDS_TO_UPDATE[0],
+      PROPERTIES_TO_UPDATE[0]
+    );
+    const updatedScreening2 = await repository.update(
+      IDS_TO_UPDATE[1],
+      PROPERTIES_TO_UPDATE[1]
+    );
+    const updatedScreening3 = await repository.update(
+      IDS_TO_UPDATE[2],
+      PROPERTIES_TO_UPDATE[2]
+    );
+
+    const updatedScreenings = [
+      updatedScreening1,
+      updatedScreening2,
+      updatedScreening3,
+    ];
+
+    expect(updatedScreenings).toHaveLength(3);
+    expect(updatedScreenings).toEqual(UPDATED_SCREENINGS);
   });
 });

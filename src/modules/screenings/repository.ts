@@ -1,11 +1,68 @@
-import type { Database } from '@/database';
+import type { Insertable, Selectable, Updateable } from 'kysely';
+import type { Database, Screenings } from '@/database';
+import { keys } from './schema';
+import BadRequest from '@/utils/errors/BadRequest';
 
-const TABLE_NAME = 'screenings';
+// Modal specific code
+const TABLE = 'screenings';
+type Row = Screenings;
+type RowWithoutId = Omit<Row, 'id'>;
+type RowRelationshipId = Pick<Row, 'movieId'>;
+type RowInsert = Insertable<RowWithoutId>;
+type RowUpdate = Updateable<RowWithoutId>;
+type RowSelect = Selectable<Row>;
 
 export default (db: Database) => ({
-  findAll: async (limit = 10, offset = 0) =>
-    db.selectFrom(TABLE_NAME).selectAll().limit(limit).offset(offset).execute(),
+  findAll: async (limit = 10, offset = 0): Promise<RowSelect[]> =>
+    db.selectFrom(TABLE).selectAll().limit(limit).offset(offset).execute(),
 
-  findByIds: async (ids: number[]) =>
-    db.selectFrom(TABLE_NAME).selectAll().where('id', 'in', ids).execute(),
+  findById: async (id: number): Promise<RowSelect | undefined> =>
+    db.selectFrom(TABLE).select(keys).where('id', '=', id).executeTakeFirst(),
+
+  findByIds: async (ids: number[]): Promise<RowSelect[]> =>
+    db.selectFrom(TABLE).selectAll().where('id', 'in', ids).execute(),
+
+  create: async (record: RowInsert): Promise<RowSelect[]> => {
+    await assertRelationshipExists(db, record);
+
+    return db.insertInto(TABLE).values(record).returning(keys).execute();
+  },
+
+  update: async (id: number, record: RowUpdate) => {
+    if (Object.keys(record).length === 0) {
+      return db
+        .selectFrom(TABLE)
+        .select(keys)
+        .where('id', '=', id)
+        .executeTakeFirst();
+    }
+
+    await assertRelationshipExists(db, record);
+
+    return db
+      .updateTable(TABLE)
+      .set(record)
+      .where('id', '=', id)
+      .returning(keys)
+      .executeTakeFirst();
+  },
 });
+
+async function assertRelationshipExists(
+  db: Database,
+  record: Partial<RowRelationshipId>
+) {
+  const { movieId } = record;
+
+  if (movieId) {
+    const movie = await db
+      .selectFrom('movies')
+      .select('id')
+      .where('id', '=', movieId)
+      .executeTakeFirst();
+
+    if (!movie) {
+      throw new BadRequest('Referenced movie does not exist');
+    }
+  }
+}
