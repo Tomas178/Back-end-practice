@@ -31,6 +31,15 @@ describe('GET', () => {
     expect(body).toEqual(USERS[0]);
   });
 
+  it('Returns users by IDs provided in query', async () => {
+    const { body } = await supertest(app)
+      .get(`/users?id=${USERS[0].id},${USERS[1].id}`)
+      .expect(200);
+
+    expect(body).toHaveLength(2);
+    expect(body).toEqual([USERS[0], USERS[1]]);
+  });
+
   it('Should return an error that user was not found', async () => {
     const invalidId = Math.max(...USERS.map((user) => user.id)) + 1;
     const { body } = await supertest(app)

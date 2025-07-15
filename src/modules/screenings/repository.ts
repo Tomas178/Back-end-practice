@@ -22,6 +22,13 @@ export default (db: Database) => ({
   findByIds: async (ids: number[]): Promise<RowSelect[]> =>
     db.selectFrom(TABLE).selectAll().where('id', 'in', ids).execute(),
 
+  getTicketsLeft: async (id: number): Promise<{ leftTickets: number }> =>
+    db
+      .selectFrom(TABLE)
+      .select('leftTickets')
+      .where('id', '=', id)
+      .executeTakeFirstOrThrow(),
+
   create: async (record: RowInsert): Promise<RowSelect> => {
     await assertRelationshipExists(db, record);
 

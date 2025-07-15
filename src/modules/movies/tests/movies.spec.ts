@@ -47,27 +47,6 @@ describe('GET', () => {
 
     expect(body).toEqual([MOVIES[0], MOVIES[1]]);
   });
-
-  // it('should return movies by a list of titles', async () => {
-  //   const { body } = await supertest(app)
-  //     .get('/movies?id=Interstellar')
-  //     .expect(200)
-
-  //   expect(body).toHaveLength(1)
-
-  //   expect(body).toEqual([
-  //     {
-  //       id: 133093,
-  //       title: 'The Matrix',
-  //       year: 1999,
-  //     },
-  //     {
-  //       id: 816692,
-  //       title: 'Interstellar',
-  //       year: 2014,
-  //     },
-  //   ])
-  // })
 });
 
 describe('POST', () => {

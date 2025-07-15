@@ -52,6 +52,13 @@ describe('Screenings returns', () => {
 
     expect(screenings).toEqual(SCREENINGS);
   });
+
+  it('Returns tickets left for screening by given id', async () => {
+    await createMovies(MOVIES[1]);
+    await createScreenings(SCREENINGS[1]);
+    const { leftTickets } = await repository.getTicketsLeft(SCREENINGS[1].id);
+    expect(leftTickets).toEqual(SCREENINGS[1].leftTickets);
+  });
 });
 
 describe('Screenings adding', () => {
