@@ -1,5 +1,6 @@
 import { SCREENINGS } from '@/modules/screenings/tests/utils/repository';
 import { USERS } from '@/modules/users/tests/utils/repository';
+import { SCREENING_WITH_NO_TICKETS } from '../../../screenings/tests/utils/repository';
 
 export const TICKETS = [
   {
@@ -21,6 +22,11 @@ export const TICKETS = [
     createdAt: '2025-05-26',
   },
 ];
+
+export const INVALID_INSERTABLE_TICKET = {
+  userId: USERS[0].id,
+  screeningId: SCREENING_WITH_NO_TICKETS.id,
+};
 
 export const INSERTABLE_TICKETS = [
   {

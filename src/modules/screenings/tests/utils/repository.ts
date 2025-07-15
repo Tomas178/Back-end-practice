@@ -111,3 +111,12 @@ export const UPDATED_SCREENINGS = [
     ...PROPERTIES_TO_UPDATE[2],
   },
 ];
+
+export const SCREENING_WITH_NO_TICKETS = {
+  id: 100,
+  movieId: MOVIES[0].id,
+  totalTickets: 1500,
+  leftTickets: 0,
+  createdAt: '2025-07-15',
+  timestamp: '2027-08-14',
+};
