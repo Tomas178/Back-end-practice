@@ -10,6 +10,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     )
     .addColumn('total_tickets', 'integer', (c) => c.notNull())
     .addColumn('left_tickets', 'integer', (c) => c.notNull())
+    .addColumn('timestamp', 'datetime', (c) => c.notNull())
     .addColumn('created_at', 'datetime', (c) =>
       c.notNull().defaultTo(sql`CURRENT_TIMESTAMP`)
     )

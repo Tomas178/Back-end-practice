@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
-
-const DATE_FORMAT = 'yyyy-MM-dd';
+import { DATE_FORMAT } from '@/helpers/constants';
 
 export const MOVIES = [
   {
@@ -20,6 +19,21 @@ export const MOVIES = [
   },
 ];
 
+export const INSERTABLE_MOVIES = [
+  {
+    title: MOVIES[0].title,
+    year: MOVIES[0].year,
+  },
+  {
+    title: MOVIES[1].title,
+    year: MOVIES[1].year,
+  },
+  {
+    title: MOVIES[2].title,
+    year: MOVIES[2].year,
+  },
+];
+
 export const SCREENINGS = [
   {
     id: 1,
@@ -27,6 +41,7 @@ export const SCREENINGS = [
     totalTickets: 1500,
     leftTickets: 1500,
     createdAt: '2025-07-14',
+    timestamp: '2025-09-01',
   },
   {
     id: 26,
@@ -34,6 +49,7 @@ export const SCREENINGS = [
     totalTickets: 2500,
     leftTickets: 2499,
     createdAt: '2004-05-26',
+    timestamp: '2026-01-01',
   },
   {
     id: 50,
@@ -41,6 +57,7 @@ export const SCREENINGS = [
     totalTickets: 150,
     leftTickets: 1,
     createdAt: '2014-01-01',
+    timestamp: '2025-07-30',
   },
 ];
 
@@ -49,16 +66,19 @@ export const INSERTABLE_SCREENINGS = [
     movieId: MOVIES[0].id,
     totalTickets: 1500,
     leftTickets: 1500,
+    timestamp: '2025-09-01',
   },
   {
     movieId: MOVIES[1].id,
     totalTickets: 2500,
     leftTickets: 2499,
+    timestamp: '2026-01-01',
   },
   {
     movieId: MOVIES[2].id,
     totalTickets: 150,
     leftTickets: 1,
+    timestamp: '2025-07-30',
   },
 ];
 
@@ -73,6 +93,7 @@ export const PROPERTIES_TO_UPDATE = [
     totalTickets: SCREENINGS[2].totalTickets % 2,
     leftTickets: (SCREENINGS[2].leftTickets % 2) - 1,
     createdAt: format(Date.now(), DATE_FORMAT),
+    timestamp: '2027-09-01',
   },
 ];
 

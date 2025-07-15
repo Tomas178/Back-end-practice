@@ -1,29 +1,20 @@
 import { z } from 'zod';
-import type { Screenings } from '@/database';
+import type { Movies } from '@/database';
 
-type Record = Screenings;
+type Record = Movies;
 const schema = z.object({
   id: z.coerce.number().int().positive(),
-  movieId: z.coerce.number().int().positive(),
-  totalTickets: z.coerce.number().int().positive(),
-  leftTickets: z.coerce.number().int().nonnegative(),
-  timestamp: z.coerce.date(),
-  createdAt: z.coerce.date(),
+  title: z.string().max(64),
+  year: z.coerce.number().int().positive(),
 });
 
-const insertable = schema.omit({
-  id: true,
-  createdAt: true,
-});
+const insertable = schema.omit({ id: true });
 
 const updateable = schema
   .omit({
     id: true,
-    movieId: true,
-    totalTickets: true,
-    leftTickets: true,
-    timestamp: true,
-    createdAt: true,
+    title: true,
+    year: true,
   })
   .partial();
 

@@ -8,9 +8,9 @@ const TABLE = 'screenings';
 type Row = Screenings;
 type RowWithoutId = Omit<Row, 'id'>;
 type RowRelationshipId = Pick<Row, 'movieId'>;
-type RowInsert = Insertable<RowWithoutId>;
+export type RowInsert = Insertable<RowWithoutId>;
 type RowUpdate = Updateable<RowWithoutId>;
-type RowSelect = Selectable<Row>;
+export type RowSelect = Selectable<Row>;
 
 export default (db: Database) => ({
   findAll: async (limit = 10, offset = 0): Promise<RowSelect[]> =>
@@ -22,11 +22,18 @@ export default (db: Database) => ({
   findByIds: async (ids: number[]): Promise<RowSelect[]> =>
     db.selectFrom(TABLE).selectAll().where('id', 'in', ids).execute(),
 
-  create: async (record: RowInsert): Promise<RowSelect[]> => {
+  create: async (record: RowInsert): Promise<RowSelect> => {
     await assertRelationshipExists(db, record);
 
-    return db.insertInto(TABLE).values(record).returning(keys).execute();
+    return db
+      .insertInto(TABLE)
+      .values(record)
+      .returning(keys)
+      .executeTakeFirstOrThrow();
   },
+
+  delete: async (id: number) =>
+    db.deleteFrom(TABLE).where('id', '=', id).executeTakeFirst(),
 
   update: async (id: number, record: RowUpdate) => {
     if (Object.keys(record).length === 0) {

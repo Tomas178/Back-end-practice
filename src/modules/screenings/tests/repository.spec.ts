@@ -60,7 +60,7 @@ describe('Screenings adding', () => {
   });
 
   it('Adds one screening successfully', async () => {
-    const [screening] = await repository.create(INSERTABLE_SCREENINGS[0]);
+    const screening = await repository.create(INSERTABLE_SCREENINGS[0]);
 
     if (screening) {
       expect(screening).toEqual(await repository.findById(screening.id));
@@ -68,9 +68,9 @@ describe('Screenings adding', () => {
   });
 
   it('Adds multiple screenings correctly', async () => {
-    const [screening1] = await repository.create(INSERTABLE_SCREENINGS[0]);
-    const [screening2] = await repository.create(INSERTABLE_SCREENINGS[1]);
-    const [screening3] = await repository.create(INSERTABLE_SCREENINGS[2]);
+    const screening1 = await repository.create(INSERTABLE_SCREENINGS[0]);
+    const screening2 = await repository.create(INSERTABLE_SCREENINGS[1]);
+    const screening3 = await repository.create(INSERTABLE_SCREENINGS[2]);
 
     const createdScreenings = [screening1, screening2, screening3];
     const retrievedScreenings = await repository.findByIds(
@@ -119,5 +119,19 @@ describe('Updating screenings', () => {
 
     expect(updatedScreenings).toHaveLength(3);
     expect(updatedScreenings).toEqual(UPDATED_SCREENINGS);
+  });
+});
+
+describe('Deletes screenings', () => {
+  beforeEach(async () => {
+    await createMovies(MOVIES);
+    await createScreenings(SCREENINGS);
+  });
+
+  it('Should delete successfully one row', async () => {
+    await repository.delete(SCREENINGS[0].id);
+    const deletedScreening = await repository.findById(SCREENINGS[0].id);
+
+    expect(deletedScreening).toBeUndefined();
   });
 });
